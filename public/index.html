@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKINTUNE — 피부 맞춤 화장품 추천</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F7F3EE;
+    --blush: #E8C8B8;
+    --rose: #C4806A;
+    --deep: #2C1F1A;
+    --sage: #8A9E8C;
+    --warm: #D4A990;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--cream);
+    color: var(--deep);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    background: linear-gradient(to bottom, var(--cream) 60%, transparent);
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+  }
+
+  .logo span { color: var(--rose); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 60px;
+    position: relative;
+  }
+
+  .hero-deco {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+  }
+  .hero-deco-1 {
+    width: 400px; height: 400px;
+    background: var(--blush);
+    top: 10%; left: -100px;
+  }
+  .hero-deco-2 {
+    width: 300px; height: 300px;
+    background: var(--sage);
+    bottom: 10%; right: -80px;
+    opacity: 0.2;
+  }
+
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s forwards;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--rose);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: #7A6A62;
+    max-width: 380px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .btn-start {
+    display: inline-block;
+    background: var(--deep);
+    color: var(--cream);
+    padding: 16px 44px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+
+  .btn-start:hover {
+    background: var(--rose);
+    transform: translateY(-2px);
+  }
+
+  /* QUIZ SECTION */
+  #quiz {
+    display: none;
+    min-height: 100vh;
+    padding: 120px 24px 80px;
+    position: relative;
+  }
+
+  .quiz-inner {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .quiz-progress {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 48px;
+  }
+
+  .progress-dot {
+    height: 3px;
+    flex: 1;
+    background: #DDD;
+    border-radius: 2px;
+    transition: background 0.4s;
+  }
+
+  .progress-dot.active { background: var(--rose); }
+
+  .question-num {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 300;
+    line-height: 1.25;
+    margin-bottom: 40px;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+
+  .option-btn {
+    background: white;
+    border: 1.5px solid #E8E0D8;
+    padding: 20px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--deep);
+    line-height: 1.4;
+  }
+
+  .option-btn:hover {
+    border-color: var(--rose);
+    background: #FDF8F5;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(196,128,106,0.12);
+  }
+
+  .option-btn.selected {
+    border-color: var(--rose);
+    background: var(--rose);
+    color: white;
+  }
+
+  .option-emoji { display: block; font-size: 22px; margin-bottom: 8px; }
+
+  .nav-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-back {
+    background: none;
+    border: none;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: #9A8A82;
+    cursor: pointer;
+    padding: 0;
+    text-transform: uppercase;
+  }
+
+  .btn-next {
+    background: var(--deep);
+    color: var(--cream);
+    border: none;
+    padding: 14px 36px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .btn-next.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .btn-next.active:hover {
+    background: var(--rose);
+  }
+
+  /* LOADING */
+  #loading {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  .loading-ring {
+    width: 64px;
+    height: 64px;
+    border: 2px solid var(--blush);
+    border-top-color: var(--rose);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 32px;
+  }
+
+  .loading-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--deep);
+    margin-bottom: 8px;
+  }
+
+  .loading-sub {
+    font-size: 13px;
+    color: #9A8A82;
+  }
+
+  /* RESULT */
+  #result {
+    display: none;
+    min-height: 100vh;
+    padding: 120px 24px 80px;
+  }
+
+  .result-inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .result-eyebrow {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 16px;
+  }
+
+  .result-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 5vw, 58px);
+    font-weight: 300;
+    margin-bottom: 40px;
+    line-height: 1.15;
+  }
+
+  .result-title em { color: var(--rose); font-style: italic; }
+
+  .result-card {
+    background: white;
+    border: 1px solid #EDE5DC;
+    padding: 40px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s;
+  }
+
+  .result-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--rose);
+  }
+
+  .card-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+
+  .card-type {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 16px;
+  }
+
+  .card-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #5A4A42;
+    margin-bottom: 20px;
+  }
+
+  .card-products {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .product-tag {
+    background: var(--cream);
+    border: 1px solid #E0D4C8;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--deep);
+    border-radius: 0;
+  }
+
+  .btn-restart {
+    display: inline-block;
+    margin-top: 40px;
+    border: 1.5px solid var(--deep);
+    background: none;
+    color: var(--deep);
+    padding: 14px 36px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .btn-restart:hover {
+    background: var(--deep);
+    color: var(--cream);
+  }
+
+  /* ERROR */
+  .error-box {
+    background: #FFF5F5;
+    border: 1px solid #F0C0C0;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: #C04040;
+    line-height: 1.6;
+    display: none;
+  }
+
+  /* API KEY INPUT */
+  .api-section {
+    background: white;
+    border: 1px solid #EDE5DC;
+    padding: 32px;
+    margin-bottom: 40px;
+  }
+
+  .api-label {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .api-input {
+    width: 100%;
+    border: 1.5px solid #E0D4C8;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--deep);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .api-input:focus { border-color: var(--rose); }
+
+  .api-note {
+    font-size: 12px;
+    color: #9A8A82;
+    margin-top: 10px;
+    line-height: 1.6;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 520px) {
+    header { padding: 20px 24px; }
+    .options-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SKIN<span>TUNE</span></div>
+</header>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-deco hero-deco-1"></div>
+  <div class="hero-deco hero-deco-2"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI 피부 분석 · 맞춤 추천</p>
+    <h1>당신의 피부에<br><em>딱 맞는</em> 브랜드</h1>
+    <p class="hero-sub">간단한 설문으로 피부 타입을 분석하고, AI가 가장 잘 맞는 기초 화장품 브랜드를 추천해드립니다.</p>
+    <button class="btn-start" onclick="startQuiz()">진단 시작하기</button>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="quiz-inner">
+    <div class="quiz-progress" id="progressBar"></div>
+    <div id="questionArea"></div>
+    <div class="nav-btns">
+      <button class="btn-back" onclick="prevQuestion()">← 이전</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQuestion()">다음</button>
+    </div>
+  </div>
+</section>
+
+<!-- LOADING -->
+<section id="loading">
+  <div class="loading-ring"></div>
+  <p class="loading-text">피부를 분석하는 중...</p>
+  <p class="loading-sub">AI가 최적의 브랜드를 찾고 있어요</p>
+</section>
+
+<!-- RESULT -->
+<section id="result">
+  <div class="result-inner">
+    <div class="error-box" id="errorBox"></div>
+    <p class="result-eyebrow">분석 완료</p>
+    <h2 class="result-title" id="resultTitle">당신의 피부를 위한<br><em>추천 브랜드</em></h2>
+    <div id="resultCards"></div>
+    <button class="btn-restart" onclick="restart()">다시 진단하기</button>
+  </div>
+</section>
+
+<script>
+const questions = [
+  {
+    num: "01",
+    text: "세안 후 아무것도 바르지 않으면 피부가 어떤가요?",
+    options: [
+      { emoji: "💧", label: "당기고 건조해요", value: "dry" },
+      { emoji: "✨", label: "번들거리고 기름져요", value: "oily" },
+      { emoji: "🌗", label: "T존만 기름지고 볼은 건조해요", value: "combination" },
+      { emoji: "😊", label: "딱히 불편함이 없어요", value: "normal" }
+    ]
+  },
+  {
+    num: "02",
+    text: "피부 트러블이 자주 생기나요?",
+    options: [
+      { emoji: "🌸", label: "자주 생겨요 (여드름, 뾰루지)", value: "acne_prone" },
+      { emoji: "🌿", label: "간혹 생기지만 금방 없어져요", value: "occasional" },
+      { emoji: "🔴", label: "새 제품을 쓰면 자주 반응해요", value: "sensitive" },
+      { emoji: "☀️", label: "거의 안 생겨요", value: "clear" }
+    ]
+  },
+  {
+    num: "03",
+    text: "피부에서 가장 신경 쓰이는 고민은?",
+    options: [
+      { emoji: "🌑", label: "모공 & 블랙헤드", value: "pores" },
+      { emoji: "🕰️", label: "주름 & 탄력", value: "aging" },
+      { emoji: "🌤️", label: "칙칙함 & 미백", value: "brightening" },
+      { emoji: "💦", label: "수분 & 보습", value: "hydration" }
+    ]
+  },
+  {
+    num: "04",
+    text: "선호하는 스킨케어 텍스처는?",
+    options: [
+      { emoji: "💧", label: "가볍고 산뜻한 (워터/젤)", value: "light" },
+      { emoji: "🧴", label: "촉촉하고 부드러운 (로션)", value: "medium" },
+      { emoji: "🫧", label: "풍부하고 묵직한 (크림)", value: "rich" },
+      { emoji: "🎯", label: "상관없어요", value: "any" }
+    ]
+  },
+  {
+    num: "05",
+    text: "화장품 예산은 어느 정도인가요?",
+    options: [
+      { emoji: "💚", label: "합리적으로 (1만~3만원대)", value: "budget" },
+      { emoji: "💛", label: "적당하게 (3만~7만원대)", value: "mid" },
+      { emoji: "🧡", label: "프리미엄 (7만원 이상)", value: "premium" },
+      { emoji: "💜", label: "가격보다 효과가 중요해요", value: "value" }
+    ]
+  }
+];
+
+let current = 0;
+let answers = [];
+
+function startQuiz() {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderProgress();
+  renderQuestion();
+}
+
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  bar.innerHTML = questions.map((_, i) =>
+    `<div class="progress-dot ${i <= current ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const selected = answers[current];
+  document.getElementById('questionArea').innerHTML = `
+    <p class="question-num">질문 ${q.num} / 0${questions.length}</p>
+    <h2 class="question-text">${q.text}</h2>
+    <div class="options-grid">
+      ${q.options.map((o, i) => `
+        <button class="option-btn ${selected === o.value ? 'selected' : ''}"
+          onclick="selectOption('${o.value}', this)">
+          <span class="option-emoji">${o.emoji}</span>
+          ${o.label}
+        </button>
+      `).join('')}
+    </div>
+
+  `;
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = current === questions.length - 1 ? '결과 보기' : '다음';
+  nextBtn.className = 'btn-next' + (selected ? ' active' : '');
+  renderProgress();
+}
+
+function selectOption(value, el) {
+  answers[current] = value;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('nextBtn').className = 'btn-next active';
+}
+
+function nextQuestion() {
+  if (!answers[current]) return;
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    getRecommendation();
+  }
+}
+
+function prevQuestion() {
+  if (current > 0) { current--; renderQuestion(); }
+  else { restart(); }
+}
+
+function buildPrompt() {
+  const labels = {
+    skinType: { dry: '건성', oily: '지성', combination: '복합성', normal: '중성' },
+    trouble: { acne_prone: '여드름성', occasional: '간헐적 트러블', sensitive: '민감성', clear: '트러블 없음' },
+    concern: { pores: '모공/블랙헤드', aging: '주름/탄력', brightening: '미백/톤업', hydration: '수분/보습' },
+    texture: { light: '가벼운 워터/젤', medium: '로션', rich: '진한 크림', any: '무관' },
+    budget: { budget: '1~3만원대', mid: '3~7만원대', premium: '7만원 이상', value: '가격무관/효과중심' }
+  };
+  const keys = ['skinType', 'trouble', 'concern', 'texture', 'budget'];
+  const summary = answers.map((a, i) => `- ${['피부타입','트러블','피부고민','선호텍스처','예산'][i]}: ${Object.values(labels)[i][a]}`).join('\n');
+
+  return `당신은 피부 전문 뷰티 컨설턴트입니다. 아래 고객 피부 정보를 바탕으로 한국에서 구매 가능한 기초 화장품 브랜드를 추천해주세요.
+
+[고객 피부 정보]
+${summary}
+
+아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요:
+{
+  "skin_summary": "피부 타입 한줄 요약 (예: 수분이 부족한 건성 민감 피부)",
+  "brands": [
+    {
+      "name": "브랜드명",
+      "price_range": "가격대 (예: 2~5만원대)",
+      "reason": "이 피부에 잘 맞는 이유 2-3문장",
+      "key_products": ["대표 제품1", "대표 제품2", "대표 제품3"]
+    }
+  ]
+}
+
+브랜드는 3개 추천해주세요. 한국 브랜드와 해외 브랜드를 적절히 섞어주세요.`;
+}
+
+async function getRecommendation() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+
+  try {
+    const response = await fetch('/api/recommend', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: buildPrompt() })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || '알 수 없는 오류');
+    }
+
+    const data = await response.json();
+    const clean = data.result.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    showResult(parsed);
+
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+function showResult(data) {
+  document.getElementById('loading').style.display = 'none';
+  const section = document.getElementById('result');
+  section.style.display = 'block';
+
+  document.getElementById('resultTitle').innerHTML =
+    `<em>${data.skin_summary}</em><br>피부를 위한 추천`;
+
+  const container = document.getElementById('resultCards');
+  container.innerHTML = data.brands.map((b, i) => `
+    <div class="result-card" id="card${i}">
+      <div class="card-brand">${b.name}</div>
+      <div class="card-type">${b.price_range}</div>
+      <p class="card-desc">${b.reason}</p>
+      <div class="card-products">
+        ${b.key_products.map(p => `<span class="product-tag">${p}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  // staggered reveal
+  data.brands.forEach((_, i) => {
+    setTimeout(() => {
+      document.getElementById(`card${i}`)?.classList.add('visible');
+    }, 200 + i * 150);
+  });
+}
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  const section = document.getElementById('result');
+  section.style.display = 'block';
+  const errorBox = document.getElementById('errorBox');
+  errorBox.style.display = 'block';
+  errorBox.textContent = `오류가 발생했어요: ${msg}`;
+}
+
+function restart() {
+  current = 0;
+  answers = [];
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+  document.getElementById('errorBox').style.display = 'none';
+}
+</script>
+</body>
+</html>
