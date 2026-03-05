@@ -3,974 +3,439 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SKINTUNE — AI 피부 맞춤 추천</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<title>스킨튠 🌸 AI 피부 진단</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0E0C0A;
-  --surface: #1A1612;
-  --surface2: #221E19;
-  --border: #2E2822;
-  --gold: #C9A96E;
-  --gold-light: #E8C99A;
-  --rose: #D4857A;
-  --sage: #7A9E8A;
-  --text: #F0EAE0;
-  --text-muted: #8A7E72;
-  --text-dim: #5A5048;
+  --pink: #FFB6C8;
+  --pink2: #FF85A1;
+  --pink3: #FF4D79;
+  --soft: #FFF0F4;
+  --white: #FFFFFF;
+  --lilac: #E8BBFF;
+  --yellow: #FFE566;
+  --mint: #B8F0E0;
+  --text: #3D1A26;
+  --text-light: #9B6B7A;
+  --border: #FFD6E0;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
+* { margin:0; padding:0; box-sizing:border-box; }
 body {
-  background: var(--bg);
+  background: var(--soft);
   color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 300;
+  font-family: 'Nunito', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
 }
-
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,169,110,0.08) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,182,200,0.3) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(232,187,255,0.25) 0%, transparent 40%);
+  pointer-events:none; z-index:0;
 }
-
-/* HEADER */
+.particles { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+.particle { position:absolute; animation:floatUp linear infinite; opacity:0.5; }
+@keyframes floatUp {
+  0% { transform:translateY(100vh) rotate(0deg); opacity:0; }
+  10% { opacity:0.5; } 90% { opacity:0.5; }
+  100% { transform:translateY(-100px) rotate(360deg); opacity:0; }
+}
 header {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  padding: 24px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 100;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.3s, background 0.3s;
+  position:fixed; top:0; left:0; right:0;
+  padding:16px 32px;
+  display:flex; justify-content:space-between; align-items:center;
+  z-index:100;
+  background:rgba(255,240,244,0.88);
+  backdrop-filter:blur(12px);
+  border-bottom:2px dashed var(--border);
 }
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  letter-spacing: 8px;
-  text-transform: uppercase;
-  color: var(--gold);
+.logo { font-family:'Gaegu',cursive; font-size:26px; font-weight:700; color:var(--pink3); }
+.logo-badge {
+  background:var(--yellow); font-size:10px; font-weight:800;
+  padding:4px 14px; border-radius:20px; color:var(--text);
+  border:2px solid var(--text); letter-spacing:1px;
 }
-
-.header-tag {
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-/* HERO */
 #hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 24px 80px;
-  position: relative;
-  z-index: 1;
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:100px 24px 60px; position:relative; z-index:1;
 }
-
-.hero-content { max-width: 680px; }
-
-.hero-badge {
-  display: inline-block;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-size: 10px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  padding: 8px 20px;
-  margin-bottom: 40px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.3s forwards;
+.hero-float { position:absolute; font-size:36px; animation:wobble 3s ease-in-out infinite; pointer-events:none; }
+@keyframes wobble { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-15px) rotate(5deg);} }
+.hero-content { position:relative; z-index:1; max-width:600px; }
+.hero-emoji-big { font-size:80px; display:block; margin-bottom:20px; animation:bounce 1s ease-in-out infinite alternate; }
+@keyframes bounce { from{transform:translateY(0);} to{transform:translateY(-12px);} }
+.hero-tag {
+  display:inline-block; background:var(--yellow); border:2px solid var(--text);
+  border-radius:30px; font-size:12px; font-weight:800; padding:6px 20px;
+  margin-bottom:24px; box-shadow:3px 3px 0 var(--text);
 }
-
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(44px, 7vw, 88px);
-  font-weight: 400;
-  line-height: 1.08;
-  margin-bottom: 28px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.5s forwards;
+h1 { font-family:'Gaegu',cursive; font-size:clamp(38px,7vw,72px); font-weight:700; line-height:1.15; margin-bottom:20px; }
+.highlight { color:var(--pink3); position:relative; display:inline-block; }
+.highlight::after {
+  content:''; position:absolute; bottom:2px; left:0; right:0;
+  height:8px; background:var(--yellow); z-index:-1; border-radius:4px;
 }
-
-h1 em { font-style: italic; color: var(--gold); }
-
-.hero-sub {
-  font-size: 15px;
-  color: var(--text-muted);
-  max-width: 400px;
-  margin: 0 auto 56px;
-  line-height: 1.8;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.7s forwards;
+.hero-sub { font-size:15px; color:var(--text-light); max-width:380px; margin:0 auto 36px; line-height:1.8; font-weight:600; }
+.features-row { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-bottom:36px; }
+.feat-chip {
+  background:white; border:2px solid var(--border); border-radius:30px;
+  padding:8px 16px; font-size:12px; font-weight:700; color:var(--text-light);
+  box-shadow:2px 2px 0 var(--border);
 }
-
-.hero-features {
-  display: flex;
-  justify-content: center;
-  gap: 32px;
-  margin-bottom: 52px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.85s forwards;
-  flex-wrap: wrap;
+.btn-start {
+  background:var(--pink3); color:white; border:3px solid var(--text);
+  border-radius:50px; padding:18px 52px; font-family:'Nunito',sans-serif;
+  font-size:18px; font-weight:900; cursor:pointer; transition:all 0.15s;
+  box-shadow:5px 5px 0 var(--text);
 }
-
-.feat-item {
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.feat-dot {
-  width: 4px; height: 4px;
-  background: var(--gold);
-  border-radius: 50%;
-}
-
-.btn-primary {
-  display: inline-block;
-  background: var(--gold);
-  color: var(--bg);
-  padding: 18px 52px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  opacity: 0;
-  animation: fadeUp 0.9s 1s forwards;
-}
-
-.btn-primary:hover {
-  background: var(--gold-light);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(201,169,110,0.25);
-}
-
-/* SECTION BASE */
-.section {
-  display: none;
-  min-height: 100vh;
-  padding: 120px 24px 80px;
-  position: relative;
-  z-index: 1;
-}
-
-/* QUIZ */
-.quiz-inner { max-width: 640px; margin: 0 auto; }
-
-.quiz-progress {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 56px;
-}
-
-.prog-bar {
-  height: 2px;
-  flex: 1;
-  background: var(--border);
-  transition: background 0.4s;
-}
-
-.prog-bar.active { background: var(--gold); }
-
-.q-step {
-  font-size: 10px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 20px;
-}
-
-.q-text {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(24px, 3.5vw, 38px);
-  font-weight: 400;
-  line-height: 1.3;
-  margin-bottom: 44px;
-  color: var(--text);
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 48px;
-}
-
+.btn-start:hover { transform:translate(-2px,-2px); box-shadow:7px 7px 0 var(--text); }
+.btn-start:active { transform:translate(3px,3px); box-shadow:2px 2px 0 var(--text); }
+#quiz { display:none; min-height:100vh; padding:100px 24px 80px; position:relative; z-index:1; }
+.quiz-inner { max-width:600px; margin:0 auto; }
+.quiz-progress { display:flex; gap:8px; margin-bottom:40px; }
+.prog-dot { flex:1; height:10px; background:var(--border); border-radius:10px; border:2px solid var(--text); transition:background 0.3s; }
+.prog-dot.active { background:var(--pink2); }
+.prog-dot.done { background:var(--pink3); }
+.q-card { background:white; border:3px solid var(--text); border-radius:24px; padding:36px; margin-bottom:24px; box-shadow:6px 6px 0 var(--text); }
+.q-num { font-size:12px; font-weight:800; color:var(--pink3); letter-spacing:2px; margin-bottom:12px; }
+.q-text { font-family:'Gaegu',cursive; font-size:clamp(22px,3.5vw,30px); font-weight:700; line-height:1.4; }
+.options-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:28px; }
 .opt-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 22px 20px;
-  text-align: left;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 300;
-  color: var(--text-muted);
-  line-height: 1.4;
+  background:white; border:2.5px solid var(--border); border-radius:16px;
+  padding:18px 16px; text-align:left; cursor:pointer; transition:all 0.15s;
+  font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--text-light);
+  box-shadow:3px 3px 0 var(--border);
 }
-
-.opt-btn:hover {
-  border-color: var(--gold);
-  color: var(--text);
-  background: var(--surface2);
+.opt-btn:hover { border-color:var(--pink2); color:var(--text); transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--pink2); }
+.opt-btn.selected { border-color:var(--pink3); background:linear-gradient(135deg,#FFE0EA,#FFB6C8); color:var(--text); transform:translate(-2px,-2px); box-shadow:5px 5px 0 var(--pink3); }
+.opt-emoji { display:block; font-size:28px; margin-bottom:10px; }
+.photo-card {
+  background:white; border:3px dashed var(--pink2); border-radius:20px;
+  padding:32px; text-align:center; margin-bottom:28px; cursor:pointer; transition:all 0.2s; position:relative;
 }
-
-.opt-btn.selected {
-  border-color: var(--gold);
-  background: rgba(201,169,110,0.1);
-  color: var(--gold);
+.photo-card:hover { background:#FFF5F8; border-color:var(--pink3); }
+.photo-preview { max-width:160px; max-height:160px; border-radius:16px; object-fit:cover; display:none; margin:0 auto 12px; border:3px solid var(--pink2); }
+.photo-title { font-size:13px; font-weight:800; color:var(--pink3); margin-bottom:8px; }
+.photo-hint { font-size:12px; color:var(--text-light); font-weight:600; }
+.nav-row { display:flex; justify-content:space-between; align-items:center; }
+.btn-back { background:white; border:2px solid var(--border); border-radius:30px; padding:10px 24px; font-size:13px; font-weight:800; color:var(--text-light); cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.15s; }
+.btn-next { background:var(--border); border:2.5px solid var(--border); border-radius:30px; color:white; padding:12px 32px; font-size:15px; font-weight:900; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.15s; pointer-events:none; }
+.btn-next.active { background:var(--pink3); border-color:var(--text); pointer-events:all; box-shadow:4px 4px 0 var(--text); }
+.btn-next.active:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--text); }
+#loading { display:none; min-height:100vh; align-items:center; justify-content:center; flex-direction:column; text-align:center; z-index:1; position:relative; padding:24px; }
+.loading-mascot { font-size:72px; animation:spinBounce 1.5s ease-in-out infinite; margin-bottom:28px; }
+@keyframes spinBounce { 0%,100%{transform:scale(1) rotate(-10deg);} 50%{transform:scale(1.1) rotate(10deg);} }
+.loading-bar-wrap { width:240px; height:16px; background:var(--border); border-radius:20px; border:2px solid var(--text); overflow:hidden; margin:20px auto; }
+.loading-bar-fill { height:100%; background:linear-gradient(90deg,var(--pink2),var(--pink3)); border-radius:20px; animation:loadFill 3s ease-in-out infinite; }
+@keyframes loadFill { 0%{width:5%;} 50%{width:80%;} 100%{width:95%;} }
+.loading-title { font-family:'Gaegu',cursive; font-size:28px; color:var(--text); margin-bottom:8px; }
+.loading-step { font-size:13px; font-weight:700; color:var(--text-light); display:none; }
+.loading-step.active { display:block; }
+#result { display:none; min-height:100vh; padding:100px 24px 80px; z-index:1; position:relative; }
+.result-inner { max-width:720px; margin:0 auto; }
+.result-hero-card {
+  background:linear-gradient(135deg,#FFB6C8,#E8BBFF);
+  border:3px solid var(--text); border-radius:28px; padding:36px;
+  text-align:center; margin-bottom:28px; box-shadow:6px 6px 0 var(--text); position:relative; overflow:hidden;
 }
-
-.opt-emoji { display: block; font-size: 20px; margin-bottom: 10px; }
-
-/* PHOTO UPLOAD */
-.photo-section {
-  border: 1px dashed var(--border);
-  padding: 40px;
-  text-align: center;
-  margin-bottom: 48px;
-  cursor: pointer;
-  transition: border-color 0.3s;
-  position: relative;
-}
-
-.photo-section:hover { border-color: var(--gold); }
-
-.photo-section input[type="file"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-  width: 100%;
-  height: 100%;
-}
-
-.photo-icon { font-size: 32px; margin-bottom: 16px; }
-.photo-label {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-.photo-sub { font-size: 11px; color: var(--text-dim); }
-.photo-preview {
-  max-width: 200px;
-  max-height: 200px;
-  border-radius: 4px;
-  object-fit: cover;
-  display: none;
-  margin: 0 auto 12px;
-}
-
-.nav-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  cursor: pointer;
-  font-family: 'Outfit', sans-serif;
-}
-
-.btn-next {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  padding: 14px 36px;
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-family: 'Outfit', sans-serif;
-  pointer-events: none;
-}
-
-.btn-next.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--bg);
-  pointer-events: all;
-}
-
-/* LOADING */
-#loading {
-  display: none;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  z-index: 1;
-  position: relative;
-}
-
-.loading-orb {
-  width: 72px;
-  height: 72px;
-  border: 1px solid var(--border);
-  border-top-color: var(--gold);
-  border-radius: 50%;
-  animation: spin 1.4s linear infinite;
-  margin-bottom: 36px;
-  position: relative;
-}
-
-.loading-orb::after {
-  content: '';
-  position: absolute;
-  inset: 6px;
-  border: 1px solid transparent;
-  border-bottom-color: var(--rose);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite reverse;
-}
-
-.loading-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.loading-steps {
-  font-size: 12px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-}
-
-.loading-step { display: none; }
-.loading-step.active { display: block; }
-
-/* RESULT */
-#result {
-  display: none;
-  min-height: 100vh;
-  padding: 120px 24px 80px;
-  z-index: 1;
-  position: relative;
-}
-
-.result-inner { max-width: 760px; margin: 0 auto; }
-
-.result-header {
-  margin-bottom: 60px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid var(--border);
-}
-
-.result-eyebrow {
-  font-size: 10px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 20px;
-}
-
-.result-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(32px, 4vw, 52px);
-  font-weight: 400;
-  line-height: 1.2;
-  margin-bottom: 16px;
-}
-
-.result-title em { color: var(--gold); font-style: italic; }
-
-.photo-analysis-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 2px solid var(--sage);
-  padding: 20px 24px;
-  margin-top: 24px;
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.7;
-  display: none;
-}
-
-/* TABS */
-.tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 40px;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  padding: 14px 28px;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  cursor: pointer;
-  font-family: 'Outfit', sans-serif;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: all 0.2s;
-}
-
-.tab-btn.active {
-  color: var(--gold);
-  border-bottom-color: var(--gold);
-}
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* BRAND CARDS */
-.brand-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 36px;
-  margin-bottom: 16px;
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.5s, transform 0.5s;
-  position: relative;
-  overflow: hidden;
-}
-
-.brand-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 2px; height: 100%;
-  background: var(--gold);
-}
-
-.brand-card.visible { opacity: 1; transform: translateY(0); }
-
-.brand-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
-.brand-price {
-  font-size: 10px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 16px;
-}
-
-.brand-reason {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.75;
-  margin-bottom: 24px;
-}
-
-.products-list { display: flex; flex-direction: column; gap: 10px; }
-
-.product-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: var(--surface2);
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.product-name { font-size: 13px; color: var(--text); flex: 1; }
-
-.buy-links { display: flex; gap: 8px; }
-
-.buy-link {
-  font-size: 10px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  text-decoration: none;
-  transition: all 0.2s;
-  border: 1px solid;
-}
-
-.buy-link.coupang {
-  color: #E8A020;
-  border-color: rgba(232,160,32,0.3);
-}
-
-.buy-link.coupang:hover { background: rgba(232,160,32,0.1); }
-
-.buy-link.olive {
-  color: var(--sage);
-  border-color: rgba(122,158,138,0.3);
-}
-
-.buy-link.olive:hover { background: rgba(122,158,138,0.1); }
-
-/* ROUTINE */
-.routine-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.routine-col-title {
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.routine-step {
-  display: flex;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.step-num {
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: var(--gold);
-  flex-shrink: 0;
-}
-
-.step-info { flex: 1; }
-
-.step-category {
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  margin-bottom: 4px;
-}
-
-.step-product { font-size: 14px; color: var(--text); margin-bottom: 6px; }
-.step-tip { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-/* INGREDIENTS */
-.ingredient-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 28px;
-  margin-bottom: 12px;
-}
-
-.ingr-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 20px;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.ingr-benefit {
-  font-size: 13px;
-  color: var(--text-muted);
-  line-height: 1.6;
-  margin-bottom: 14px;
-}
-
-.ingr-avoid {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--rose);
-  background: rgba(212,133,122,0.08);
-  border: 1px solid rgba(212,133,122,0.15);
-  padding: 10px 14px;
-}
-
-.btn-restart {
-  margin-top: 52px;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  padding: 14px 36px;
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  cursor: pointer;
-  font-family: 'Outfit', sans-serif;
-  transition: all 0.3s;
-}
-
-.btn-restart:hover { border-color: var(--gold); color: var(--gold); }
-
-.error-box {
-  background: rgba(212,133,122,0.08);
-  border: 1px solid rgba(212,133,122,0.3);
-  padding: 20px 24px;
-  margin-bottom: 24px;
-  font-size: 14px;
-  color: var(--rose);
-  line-height: 1.6;
-  display: none;
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-@media (max-width: 600px) {
-  header { padding: 20px 20px; }
-  .options-grid { grid-template-columns: 1fr; }
-  .routine-cols { grid-template-columns: 1fr; }
-  .buy-links { flex-direction: column; }
+.result-emoji { font-size:52px; margin-bottom:16px; display:block; }
+.result-skin-label { display:inline-block; background:white; border:2px solid var(--text); border-radius:30px; padding:8px 24px; font-size:14px; font-weight:900; color:var(--pink3); margin-bottom:16px; box-shadow:3px 3px 0 var(--text); }
+.result-title { font-family:'Gaegu',cursive; font-size:clamp(22px,4vw,34px); font-weight:700; color:var(--text); }
+.photo-analysis-box { background:white; border:2px solid var(--mint); border-radius:16px; padding:16px 20px; margin-top:16px; font-size:13px; color:var(--text-light); font-weight:600; line-height:1.6; display:none; text-align:left; }
+.tabs { display:flex; gap:8px; margin-bottom:24px; overflow-x:auto; padding-bottom:4px; }
+.tab-btn { background:white; border:2.5px solid var(--border); border-radius:30px; padding:10px 22px; font-size:13px; font-weight:800; color:var(--text-light); cursor:pointer; font-family:'Nunito',sans-serif; white-space:nowrap; transition:all 0.15s; box-shadow:3px 3px 0 var(--border); }
+.tab-btn.active { background:var(--pink3); border-color:var(--text); color:white; box-shadow:3px 3px 0 var(--text); }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+.brand-card { background:white; border:2.5px solid var(--text); border-radius:20px; padding:28px; margin-bottom:16px; box-shadow:5px 5px 0 var(--text); opacity:0; transform:translateY(16px); transition:opacity 0.4s,transform 0.4s; }
+.brand-card.visible { opacity:1; transform:translateY(0); }
+.brand-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; gap:12px; }
+.brand-name { font-family:'Gaegu',cursive; font-size:26px; font-weight:700; }
+.brand-price { background:var(--yellow); border:2px solid var(--text); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:800; white-space:nowrap; }
+.brand-reason { font-size:14px; color:var(--text-light); line-height:1.7; margin-bottom:20px; font-weight:600; }
+.products-list { display:flex; flex-direction:column; gap:10px; }
+.product-row { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--soft); border:2px solid var(--border); border-radius:12px; gap:12px; flex-wrap:wrap; }
+.product-name { font-size:13px; font-weight:700; flex:1; }
+.buy-link { font-size:12px; font-weight:800; padding:7px 18px; text-decoration:none; border-radius:20px; border:2px solid var(--text); background:var(--pink3); color:white; transition:all 0.15s; box-shadow:2px 2px 0 var(--text); white-space:nowrap; }
+.buy-link:hover { transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--text); }
+.routine-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.routine-col { background:white; border:2.5px solid var(--text); border-radius:20px; padding:24px; box-shadow:4px 4px 0 var(--text); }
+.routine-col-title { font-family:'Gaegu',cursive; font-size:20px; font-weight:700; margin-bottom:20px; }
+.routine-step { display:flex; gap:14px; padding:12px 0; border-bottom:2px dashed var(--border); }
+.routine-step:last-child { border-bottom:none; }
+.step-num { width:30px; height:30px; background:var(--pink); border:2px solid var(--text); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; flex-shrink:0; }
+.step-category { font-size:10px; font-weight:800; color:var(--pink3); letter-spacing:1px; text-transform:uppercase; margin-bottom:3px; }
+.step-product { font-size:14px; font-weight:700; margin-bottom:4px; }
+.step-tip { font-size:12px; color:var(--text-light); font-weight:600; line-height:1.5; }
+.ingredient-card { background:white; border:2.5px solid var(--text); border-radius:20px; padding:24px; margin-bottom:12px; box-shadow:4px 4px 0 var(--text); }
+.ingr-name { font-family:'Gaegu',cursive; font-size:22px; font-weight:700; margin-bottom:8px; }
+.ingr-benefit { font-size:13px; color:var(--text-light); font-weight:600; line-height:1.6; margin-bottom:14px; }
+.ingr-avoid { background:#FFF0F0; border:2px solid #FFB8B8; border-radius:12px; padding:10px 14px; font-size:12px; color:#D44; font-weight:700; }
+.btn-restart { display:block; margin:40px auto 0; background:white; border:2.5px solid var(--text); border-radius:30px; color:var(--text); padding:14px 40px; font-size:15px; font-weight:900; cursor:pointer; font-family:'Nunito',sans-serif; transition:all 0.15s; box-shadow:4px 4px 0 var(--text); }
+.btn-restart:hover { transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--text); }
+.error-box { background:#FFF0F0; border:2px solid #FFB8B8; border-radius:16px; padding:20px 24px; margin-bottom:20px; font-size:14px; font-weight:700; color:#D44; display:none; }
+@media (max-width:560px) {
+  header { padding:14px 20px; }
+  .options-grid { grid-template-columns:1fr; }
+  .routine-cols { grid-template-columns:1fr; }
+  .q-card { padding:24px 20px; }
 }
 </style>
 </head>
 <body>
-
+<div class="particles" id="particles"></div>
 <header>
-  <div class="logo">SKINTUNE</div>
-  <div class="header-tag">AI 피부 분석</div>
+  <div class="logo">🌸 스킨튠</div>
+  <div class="logo-badge">AI 피부 진단</div>
 </header>
 
-<!-- HERO -->
 <section id="hero">
+  <div class="hero-float" style="top:15%;left:8%">🌟</div>
+  <div class="hero-float" style="top:20%;right:10%;animation-delay:0.5s">💕</div>
+  <div class="hero-float" style="bottom:22%;left:12%;animation-delay:1s">✨</div>
+  <div class="hero-float" style="bottom:25%;right:8%;animation-delay:1.5s">🌸</div>
   <div class="hero-content">
-    <div class="hero-badge">AI 피부 맞춤 솔루션</div>
-    <h1>당신의 피부,<br><em>과학적으로</em><br>분석합니다</h1>
-    <p class="hero-sub">설문 + 피부 사진으로 정밀 분석 후, 맞춤 브랜드와 아침/저녁 루틴을 추천해드려요.</p>
-    <div class="hero-features">
-      <div class="feat-item"><div class="feat-dot"></div>AI 피부 사진 분석</div>
-      <div class="feat-item"><div class="feat-dot"></div>맞춤 브랜드 추천</div>
-      <div class="feat-item"><div class="feat-dot"></div>아침/저녁 루틴</div>
-      <div class="feat-item"><div class="feat-dot"></div>성분 궁합 체크</div>
+    <span class="hero-emoji-big">🧴✨</span>
+    <div class="hero-tag">🤖 AI 피부 분석 무료 체험</div>
+    <h1>내 피부에 딱 맞는<br><span class="highlight">화장품</span> 찾기!</h1>
+    <p class="hero-sub">사진 + 설문으로 AI가 분석해서<br>나만의 스킨케어 루틴을 추천해줘요 💖</p>
+    <div class="features-row">
+      <div class="feat-chip">📷 사진 분석</div>
+      <div class="feat-chip">🛒 쿠팡 바로가기</div>
+      <div class="feat-chip">☀️🌙 루틴 추천</div>
+      <div class="feat-chip">🧪 성분 궁합</div>
     </div>
-    <button class="btn-primary" onclick="startQuiz()">무료 진단 시작</button>
+    <button class="btn-start" onclick="startQuiz()">진단 시작하기 🌸</button>
   </div>
 </section>
 
-<!-- QUIZ -->
-<section id="quiz" class="section">
+<section id="quiz">
   <div class="quiz-inner">
     <div class="quiz-progress" id="progressBar"></div>
     <div id="questionArea"></div>
     <div class="nav-row">
       <button class="btn-back" onclick="prevQ()">← 이전</button>
-      <button class="btn-next" id="nextBtn" onclick="nextQ()">다음</button>
+      <button class="btn-next" id="nextBtn" onclick="nextQ()">다음 →</button>
     </div>
   </div>
 </section>
 
-<!-- LOADING -->
 <section id="loading">
-  <div class="loading-orb"></div>
-  <p class="loading-title">분석 중...</p>
+  <div class="loading-mascot">🔮</div>
+  <p class="loading-title">AI가 분석 중이에요!</p>
+  <div class="loading-bar-wrap"><div class="loading-bar-fill"></div></div>
   <div class="loading-steps">
-    <div class="loading-step active" id="ls0">피부 사진 분석 중</div>
-    <div class="loading-step" id="ls1">설문 데이터 처리 중</div>
-    <div class="loading-step" id="ls2">맞춤 브랜드 탐색 중</div>
-    <div class="loading-step" id="ls3">루틴 & 성분 분석 중</div>
+    <div class="loading-step active" id="ls0">📷 피부 사진 분석 중...</div>
+    <div class="loading-step" id="ls1">📋 설문 데이터 처리 중...</div>
+    <div class="loading-step" id="ls2">🛍️ 맞춤 브랜드 탐색 중...</div>
+    <div class="loading-step" id="ls3">🌿 루틴 & 성분 분석 중...</div>
   </div>
 </section>
 
-<!-- RESULT -->
 <section id="result">
   <div class="result-inner">
     <div class="error-box" id="errorBox"></div>
-
-    <div class="result-header">
-      <p class="result-eyebrow">분석 완료</p>
-      <h2 class="result-title" id="resultTitle">결과 로딩 중...</h2>
+    <div class="result-hero-card">
+      <span class="result-emoji">🌸</span>
+      <div class="result-skin-label" id="skinLabel">분석 중...</div>
+      <h2 class="result-title" id="resultTitle">나만의 맞춤 스킨케어 🌸</h2>
       <div class="photo-analysis-box" id="photoAnalysisBox"></div>
     </div>
-
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('brands', this)">추천 브랜드</button>
-      <button class="tab-btn" onclick="switchTab('routine', this)">아침/저녁 루틴</button>
-      <button class="tab-btn" onclick="switchTab('ingredients', this)">성분 분석</button>
+      <button class="tab-btn active" onclick="switchTab('brands',this)">🛍️ 추천 브랜드</button>
+      <button class="tab-btn" onclick="switchTab('routine',this)">☀️🌙 루틴</button>
+      <button class="tab-btn" onclick="switchTab('ingredients',this)">🧪 성분 분석</button>
     </div>
-
     <div class="tab-panel active" id="tab-brands"></div>
     <div class="tab-panel" id="tab-routine"></div>
     <div class="tab-panel" id="tab-ingredients"></div>
-
-    <button class="btn-restart" onclick="restart()">다시 진단하기</button>
+    <button class="btn-restart" onclick="restart()">🔄 다시 진단하기</button>
   </div>
 </section>
 
 <script>
+const emojis = ['🌸','✨','💕','⭐','🌟','💫','🎀','🌷'];
+const pc = document.getElementById('particles');
+for (let i = 0; i < 16; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.animationDuration = (8 + Math.random() * 12) + 's';
+  p.style.animationDelay = (Math.random() * 10) + 's';
+  p.style.fontSize = (14 + Math.random() * 14) + 'px';
+  pc.appendChild(p);
+}
+
 const questions = [
-  { num:'01', text:'세안 후 아무것도 바르지 않으면 피부가 어떤가요?', key:'skinType',
-    options:[
-      {emoji:'💧', label:'당기고 건조해요', value:'dry'},
-      {emoji:'✨', label:'번들거리고 기름져요', value:'oily'},
-      {emoji:'🌗', label:'T존만 기름지고 볼은 건조해요', value:'combination'},
-      {emoji:'😊', label:'딱히 불편함 없어요', value:'normal'}
-    ]},
-  { num:'02', text:'피부 트러블이 자주 생기나요?', key:'trouble',
-    options:[
-      {emoji:'🌸', label:'자주 생겨요 (여드름, 뾰루지)', value:'acne_prone'},
-      {emoji:'🌿', label:'간혹 생기지만 금방 없어져요', value:'occasional'},
-      {emoji:'🔴', label:'새 제품에 자주 반응해요', value:'sensitive'},
-      {emoji:'☀️', label:'거의 안 생겨요', value:'clear'}
-    ]},
-  { num:'03', text:'가장 신경 쓰이는 피부 고민은?', key:'concern',
-    options:[
-      {emoji:'🌑', label:'모공 & 블랙헤드', value:'pores'},
-      {emoji:'🕰️', label:'주름 & 탄력', value:'aging'},
-      {emoji:'🌤️', label:'칙칙함 & 미백', value:'brightening'},
-      {emoji:'💦', label:'수분 & 보습', value:'hydration'}
-    ]},
-  { num:'04', text:'선호하는 스킨케어 텍스처는?', key:'texture',
-    options:[
-      {emoji:'💧', label:'가볍고 산뜻한 (워터/젤)', value:'light'},
-      {emoji:'🧴', label:'촉촉한 (로션)', value:'medium'},
-      {emoji:'🫧', label:'묵직하고 풍부한 (크림)', value:'rich'},
-      {emoji:'🎯', label:'상관없어요', value:'any'}
-    ]},
-  { num:'05', text:'화장품 예산은 어느 정도인가요?', key:'budget',
-    options:[
-      {emoji:'💚', label:'합리적으로 (1~3만원)', value:'budget'},
-      {emoji:'💛', label:'적당하게 (3~7만원)', value:'mid'},
-      {emoji:'🧡', label:'프리미엄 (7만원 이상)', value:'premium'},
-      {emoji:'💜', label:'가격보다 효과 중심', value:'value'}
-    ]}
+  { num:'01', text:'세안 후 아무것도 안 바르면 피부가 어때요? 🤔', key:'skinType',
+    options:[{emoji:'💧',label:'당기고 건조해요',value:'dry'},{emoji:'✨',label:'번들거려요',value:'oily'},{emoji:'🌗',label:'T존만 기름져요',value:'combination'},{emoji:'😊',label:'그냥 괜찮아요',value:'normal'}]},
+  { num:'02', text:'트러블이 자주 생기나요? 😥', key:'trouble',
+    options:[{emoji:'🌸',label:'자주 나요 (여드름 등)',value:'acne_prone'},{emoji:'🌿',label:'가끔 생겨요',value:'occasional'},{emoji:'🔴',label:'새 제품에 예민해요',value:'sensitive'},{emoji:'☀️',label:'거의 안 나요',value:'clear'}]},
+  { num:'03', text:'제일 신경 쓰이는 피부 고민은? 💭', key:'concern',
+    options:[{emoji:'🌑',label:'모공 & 블랙헤드',value:'pores'},{emoji:'🕰️',label:'주름 & 탄력',value:'aging'},{emoji:'🌤️',label:'칙칙함 & 미백',value:'brightening'},{emoji:'💦',label:'수분 & 보습',value:'hydration'}]},
+  { num:'04', text:'어떤 텍스처를 좋아해요? 🧴', key:'texture',
+    options:[{emoji:'💧',label:'가볍고 산뜻한 젤',value:'light'},{emoji:'🥛',label:'촉촉한 로션',value:'medium'},{emoji:'🫧',label:'묵직한 크림',value:'rich'},{emoji:'🎯',label:'상관없어요',value:'any'}]},
+  { num:'05', text:'예산은 어느 정도예요? 💸', key:'budget',
+    options:[{emoji:'💚',label:'1~3만원대',value:'budget'},{emoji:'💛',label:'3~7만원대',value:'mid'},{emoji:'🧡',label:'7만원 이상',value:'premium'},{emoji:'💜',label:'효과가 중요해요',value:'value'}]}
 ];
 
-let cur = 0, answers = {}, photoFile = null, loadStep = 0, loadTimer = null;
+let cur=0, answers={}, photoFile=null, loadTimer=null, loadStep=0;
 
 function startQuiz() {
-  show('hero', false);
-  show('quiz', true);
-  renderProgress();
-  renderQ();
+  document.getElementById('hero').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderProgress(); renderQ();
 }
 
 function show(id, visible) {
   const el = document.getElementById(id);
-  if (id === 'loading') {
-    el.style.display = visible ? 'flex' : 'none';
-  } else {
-    el.style.display = visible ? 'block' : 'none';
-  }
+  el.style.display = id==='loading' ? (visible?'flex':'none') : (visible?'block':'none');
 }
 
 function renderProgress() {
   document.getElementById('progressBar').innerHTML =
-    questions.map((_, i) => `<div class="prog-bar ${i <= cur ? 'active' : ''}"></div>`).join('');
+    questions.map((_,i)=>`<div class="prog-dot ${i<cur?'done':i===cur?'active':''}"></div>`).join('');
 }
 
 function renderQ() {
-  const q = questions[cur];
-  const isLast = cur === questions.length - 1;
+  const q = questions[cur], isLast = cur===questions.length-1;
   document.getElementById('questionArea').innerHTML = `
-    <p class="q-step">질문 ${q.num} / 0${questions.length}</p>
-    <h2 class="q-text">${q.text}</h2>
+    <div class="q-card">
+      <p class="q-num">질문 ${q.num} / 0${questions.length}</p>
+      <h2 class="q-text">${q.text}</h2>
+    </div>
     <div class="options-grid">
-      ${q.options.map(o => `
-        <button class="opt-btn ${answers[q.key] === o.value ? 'selected' : ''}"
-          onclick="selectOpt('${q.key}','${o.value}',this)">
+      ${q.options.map(o=>`
+        <button class="opt-btn ${answers[q.key]===o.value?'selected':''}" onclick="selectOpt('${q.key}','${o.value}',this)">
           <span class="opt-emoji">${o.emoji}</span>${o.label}
         </button>`).join('')}
     </div>
-    ${isLast ? `
-    <div style="margin-bottom:48px;">
-      <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">피부 사진 업로드 (선택)</p>
-      <div class="photo-section" onclick="document.getElementById('photoInput').click()">
-        <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)" style="display:none">
-        <img id="photoPreview" class="photo-preview">
-        <div id="photoPlaceholder">
-          <div class="photo-icon">📷</div>
-          <p class="photo-label">피부 사진을 업로드하면 더 정확해요</p>
-          <p class="photo-sub">클릭하여 선택 · JPG, PNG · 최대 10MB</p>
-        </div>
+    ${isLast?`
+    <div class="photo-card" onclick="document.getElementById('photoInput').click()">
+      <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)" style="display:none">
+      <img id="photoPreview" class="photo-preview">
+      <div id="photoPlaceholder">
+        <div style="font-size:36px;margin-bottom:12px">📷</div>
+        <p class="photo-title">피부 사진 업로드 (선택)</p>
+        <p class="photo-hint">업로드하면 더 정확하게 분석돼요 ✨</p>
       </div>
-    </div>` : ''}
-  `;
-  const nextBtn = document.getElementById('nextBtn');
-  nextBtn.textContent = isLast ? '결과 보기' : '다음';
-  nextBtn.className = 'btn-next' + (answers[q.key] ? ' active' : '');
+    </div>`:''}`;
+  const nb = document.getElementById('nextBtn');
+  nb.textContent = isLast?'결과 보기 🌸':'다음 →';
+  nb.className = 'btn-next'+(answers[q.key]?' active':'');
   renderProgress();
 }
 
-function selectOpt(key, val, el) {
-  answers[key] = val;
-  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+function selectOpt(key,val,el) {
+  answers[key]=val;
+  document.querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('nextBtn').className = 'btn-next active';
+  document.getElementById('nextBtn').className='btn-next active';
 }
 
 function handlePhoto(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  photoFile = file;
-  const preview = document.getElementById('photoPreview');
-  const placeholder = document.getElementById('photoPlaceholder');
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = 'block';
-  placeholder.style.display = 'none';
+  const file=e.target.files[0]; if(!file) return;
+  photoFile=file;
+  const preview=document.getElementById('photoPreview');
+  preview.src=URL.createObjectURL(file); preview.style.display='block';
+  document.getElementById('photoPlaceholder').style.display='none';
 }
 
 function nextQ() {
-  if (!answers[questions[cur].key]) return;
-  if (cur < questions.length - 1) { cur++; renderQ(); }
-  else { analyze(); }
+  if(!answers[questions[cur].key]) return;
+  if(cur<questions.length-1){cur++;renderQ();}
+  else analyze();
 }
 
 function prevQ() {
-  if (cur > 0) { cur--; renderQ(); }
-  else { show('quiz', false); show('hero', true); }
+  if(cur>0){cur--;renderQ();}
+  else{show('quiz',false);document.getElementById('hero').style.display='flex';}
 }
 
-function animateLoadSteps() {
-  loadStep = 0;
-  document.querySelectorAll('.loading-step').forEach(el => el.classList.remove('active'));
+function animateLoad() {
+  loadStep=0;
+  document.querySelectorAll('.loading-step').forEach(e=>e.classList.remove('active'));
   document.getElementById('ls0').classList.add('active');
-  loadTimer = setInterval(() => {
-    loadStep = (loadStep + 1) % 4;
-    document.querySelectorAll('.loading-step').forEach(el => el.classList.remove('active'));
-    document.getElementById(`ls${loadStep}`).classList.add('active');
-  }, 900);
+  loadTimer=setInterval(()=>{
+    loadStep=(loadStep+1)%4;
+    document.querySelectorAll('.loading-step').forEach(e=>e.classList.remove('active'));
+    document.getElementById('ls'+loadStep).classList.add('active');
+  },900);
 }
 
 async function analyze() {
-  show('quiz', false);
-  show('loading', true);
-  animateLoadSteps();
-
+  show('quiz',false); show('loading',true); animateLoad();
   try {
-    const formData = new FormData();
-    formData.append('answers', JSON.stringify(answers));
-    if (photoFile) formData.append('photo', photoFile);
-
-    const response = await fetch('/api/recommend', { method: 'POST', body: formData });
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error || '서버 오류');
-    }
-    const data = await response.json();
-    clearInterval(loadTimer);
-    showResult(data.result);
-  } catch (err) {
-    clearInterval(loadTimer);
-    show('loading', false);
-    show('result', true);
-    document.getElementById('errorBox').style.display = 'block';
-    document.getElementById('errorBox').textContent = `오류: ${err.message}`;
+    const fd=new FormData();
+    fd.append('answers',JSON.stringify(answers));
+    if(photoFile) fd.append('photo',photoFile);
+    const res=await fetch('/api/recommend',{method:'POST',body:fd});
+    if(!res.ok){const e=await res.json();throw new Error(e.error||'서버 오류');}
+    const data=await res.json();
+    clearInterval(loadTimer); showResult(data.result);
+  } catch(err) {
+    clearInterval(loadTimer); show('loading',false); show('result',true);
+    const eb=document.getElementById('errorBox');
+    eb.style.display='block'; eb.textContent='오류가 생겼어요 😢 '+err.message;
   }
 }
 
 function showResult(data) {
-  show('loading', false);
-  show('result', true);
-
-  document.getElementById('resultTitle').innerHTML =
-    `<em>${data.skin_type_label}</em> 피부를 위한<br>맞춤 솔루션`;
-
-  if (data.photo_analysis) {
-    const box = document.getElementById('photoAnalysisBox');
-    box.style.display = 'block';
-    box.innerHTML = `📸 사진 분석: ${data.photo_analysis}`;
+  show('loading',false); show('result',true);
+  document.getElementById('skinLabel').textContent=data.skin_type_label+' 피부';
+  if(data.photo_analysis){
+    const box=document.getElementById('photoAnalysisBox');
+    box.style.display='block'; box.innerHTML='📸 '+data.photo_analysis;
   }
-
-  // BRANDS TAB
-  document.getElementById('tab-brands').innerHTML = data.brands.map((b, i) => `
+  document.getElementById('tab-brands').innerHTML=data.brands.map((b,i)=>`
     <div class="brand-card" id="bc${i}">
-      <div class="brand-name">${b.name}</div>
-      <div class="brand-price">${b.price_range}</div>
+      <div class="brand-header">
+        <div class="brand-name">${b.name}</div>
+        <div class="brand-price">${b.price_range}</div>
+      </div>
       <p class="brand-reason">${b.reason}</p>
       <div class="products-list">
-        ${b.key_products.map(p => `
+        ${b.key_products.map(p=>`
           <div class="product-row">
-            <span class="product-name">${p.name}</span>
-            <div class="buy-links">
-              <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.coupang_search)}&affiliate=AF8521325" target="_blank" class="buy-link coupang">쿠팡</a>
-              <a href="https://www.oliveyoung.co.kr/store/search/getSearchMain.do?query=${encodeURIComponent(p.oliveyoung_search)}" target="_blank" class="buy-link olive">올리브영</a>
-            </div>
+            <span class="product-name">🌸 ${p.name}</span>
+            <a href="https://www.coupang.com/np/search?q=${encodeURIComponent(p.coupang_search)}&affiliate=AF8521325" target="_blank" class="buy-link">🛒 쿠팡</a>
           </div>`).join('')}
       </div>
     </div>`).join('');
-
-  data.brands.forEach((_, i) => setTimeout(() => document.getElementById(`bc${i}`)?.classList.add('visible'), 150 + i * 150));
-
-  // ROUTINE TAB
-  const buildRoutine = (steps) => steps.map(s => `
+  data.brands.forEach((_,i)=>setTimeout(()=>document.getElementById('bc'+i)?.classList.add('visible'),150+i*150));
+  const buildR=steps=>steps.map(s=>`
     <div class="routine-step">
       <div class="step-num">${s.step}</div>
-      <div class="step-info">
-        <div class="step-category">${s.category}</div>
-        <div class="step-product">${s.product_type}</div>
-        <div class="step-tip">${s.tip}</div>
-      </div>
+      <div><div class="step-category">${s.category}</div><div class="step-product">${s.product_type}</div><div class="step-tip">${s.tip}</div></div>
     </div>`).join('');
-
-  document.getElementById('tab-routine').innerHTML = `
+  document.getElementById('tab-routine').innerHTML=`
     <div class="routine-cols">
-      <div>
-        <div class="routine-col-title">☀️ 아침 루틴</div>
-        ${buildRoutine(data.morning_routine)}
-      </div>
-      <div>
-        <div class="routine-col-title">🌙 저녁 루틴</div>
-        ${buildRoutine(data.evening_routine)}
-      </div>
+      <div class="routine-col"><div class="routine-col-title">☀️ 아침 루틴</div>${buildR(data.morning_routine)}</div>
+      <div class="routine-col"><div class="routine-col-title">🌙 저녁 루틴</div>${buildR(data.evening_routine)}</div>
     </div>`;
-
-  // INGREDIENTS TAB
-  document.getElementById('tab-ingredients').innerHTML = data.ingredient_tips.map(ing => `
+  document.getElementById('tab-ingredients').innerHTML=data.ingredient_tips.map(ing=>`
     <div class="ingredient-card">
-      <div class="ingr-name">${ing.ingredient}</div>
+      <div class="ingr-name">🧪 ${ing.ingredient}</div>
       <p class="ingr-benefit">${ing.benefit}</p>
-      <div class="ingr-avoid">⚠️ &nbsp;함께 사용 주의: ${ing.avoid_with}</div>
+      <div class="ingr-avoid">⚠️ 함께 사용 주의: ${ing.avoid_with}</div>
     </div>`).join('');
 }
 
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+function switchTab(name,btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById(`tab-${name}`).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
 }
 
 function restart() {
-  cur = 0; answers = {}; photoFile = null;
-  ['hero','quiz','loading','result'].forEach(id => show(id, false));
-  document.getElementById('errorBox').style.display = 'none';
-  show('hero', true);
+  cur=0;answers={};photoFile=null;
+  ['quiz','loading','result'].forEach(id=>show(id,false));
+  document.getElementById('errorBox').style.display='none';
+  document.getElementById('hero').style.display='flex';
 }
 </script>
 </body>
